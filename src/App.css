@@ -1,0 +1,104 @@
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  background-color: linear-gradient(to bottom, #1a1a2e, #16213e);
+  text-align: center;
+  overscroll-behavior: none;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+
+.read-the-docs {
+  color: #888;
+}
+
+.editor-wrapper {
+  height: 100vh; /* or 80vh or whatever you want */
+  width: 100%;
+  margin-top: 12px;
+}
+
+.monaco-editor .view-lines {
+  padding-left: 3px !important;
+}
+
+.tutorial-block:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+  transform: translateY(-2px);
+  transition: all 0.2s ease-in-out;
+}
+
+.tutorial-block {
+  background-color: #1e2a38;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 24px;
+  margin-bottom: 32px;
+}
+
+.tutorial-title {
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 24px;
+  font-weight: 600;
+  color: #ffffff;
+  text-align: center;
+  font-family: 'Inter', 'Helvetica Neue', sans-serif;
+}
+
+.tutorial-block {
+  min-height: unset;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 24px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  margin: 0 auto;
+  max-width: 700px;
+}
+
+.tutorial-block {
+  margin-bottom: 40px;
+}
+
+.tutorial-paragraph {
+  font-size: 16px;
+  line-height: 1.6;
+  font-family: 'Inter', 'Helvetica Neue', sans-serif;
+  color: #fffefe;
+  text-align: justify;
+}
+
+.tutorial-block h2,
+.tutorial-block h3 {
+  color: #3fcaff; /* or your chosen accent color */
+}
