@@ -25,13 +25,13 @@ function App() {
    const tutorialSteps = [
     {
       title: "Welcome to the MotorMusic Tutorial",
-      instructionText: "This is the tutorial for <strong>MotorMusic</strong>, a programming language designed to capture musical ideas from the inside out — not just as notes or sounds, but as felt motion, gesture, and inner musical experience. Rather than starting from scales or instruments, <strong>MotorMusic</strong> begins with how music moves us — in the body, in space, and in time — and builds upward from there (the building up part is in progress and will come in later versions of the language). This guide will walk you through the fundamental components of the language step by step, showing how to shape musical thought using the core constructs of syllables, tension and release, and nested motion.",
+      instructionText: "This is the tutorial for <strong>MotorMusic</strong>, a programming language designed to capture musical ideas from the inside out — not just as notes or sounds, but as felt motion, gesture, and inner musical experience. Rather than starting from scales or instruments, <strong>MotorMusic</strong> begins with how music moves us — in the body (space) and in time — and builds upward from there (the building up part is in progress and will come in later versions of the language). This guide will walk you through the fundamental components of the language step by step, showing how to shape musical thought using the core constructs of syllables, tension and release, and nested motion.",
       defaultCodes: []
     },
     {
       title: "The Syllable",
       instructionText: "The building block of MotorMusic is the syllable. It is just a written 'word' that represents an <strong>atomic musical unit </strong>. Right now, syllables serve as symbolic placeholders, but in the future, we will develop a system that will give them precise meaning. Only then can they start affecting the sound we generate. Ultimately, they will be used to abstract any specific musical qualities in question.",
-      defaultCodes: ["ba", "baaa", "b", "blegh"]
+      defaultCodes: ["ca", "twaaa", "b", "blegh"]
     },
     {
       title: "Timing",
