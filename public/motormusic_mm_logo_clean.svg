@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="2048" height="2048" viewBox="0 0 2048 2048" role="img" aria-label="MotorMusic MM logo">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00E6D8"/>
+      <stop offset="50%" stop-color="#3AA7FF"/>
+      <stop offset="100%" stop-color="#C243FF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Main MM text -->
+  <!-- Using a rounded sans-serif font for the curvy feel -->
+  <text x="50%" y="55%" text-anchor="middle"
+        font-family="'Segoe UI Rounded', 'Poppins', 'Montserrat', 'Helvetica Neue', Arial, sans-serif"
+        font-weight="900"
+        font-size="760"
+        letter-spacing="-18"
+        fill="url(#grad)">
+    MM
+  </text>
+</svg>
