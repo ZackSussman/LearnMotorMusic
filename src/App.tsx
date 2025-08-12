@@ -10,10 +10,11 @@ function TutorialBlock({title, instructionText, defaultCodes} : {title : string,
       {defaultCodes.map((code, idx) => (
         <div key={idx} style={{ marginTop: '12px', marginBottom: '12px' }}>
           <MotorMusicEditor
-            height="38px"
+            height="28px"
             width="600px"
             initialCode={code}
             lineNumbers="off"
+            disableDSTPMInput={true}
           />
         </div>
       ))}
