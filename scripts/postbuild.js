@@ -7,7 +7,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const distDir = path.resolve(__dirname, '../dist');
-const targetDir = "/Users/zacksussman/Documents/code/PersonalSite/public/MotorMusic/LearnMotorMusic";
+const targetDir = "/Users/zacksussman/Documents/code/PersonalSite/public/LearnMotorMusic";
 
 (async () => {
   try {

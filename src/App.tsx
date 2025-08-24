@@ -1,32 +1,252 @@
 import MotorMusicEditor from 'motormusic-react-component'; // or whatever the package name is
 import './App.css';
+import { useRef, useState, useEffect } from 'react';
 
+function TableOfContents({ tutorialSteps, onItemClick, activeStepIndex }: { 
+  tutorialSteps: Array<{title: string}>, 
+  onItemClick: (stepIndex: number) => void,
+  activeStepIndex: number
+}) {
+  const sections = [
+    { title: "Intro", startIndex: 0 },
+    { title: "Atomic Units", startIndex: 1 },
+    { title: "Basic Motion", startIndex: 4 },
+    { title: "Nested Motion", startIndex: 7 },
+    { title: "Pitch", startIndex: 8 },
+    { title: "Polyphony", startIndex: 9 },
+    { title: "Conclusion", startIndex: 11 }
+  ];
 
-function TutorialBlock({title, instructionText, defaultCodes} : {title : string, instructionText : string, defaultCodes : string[]}) {
-    return (
-    <div className="tutorial-block">
-      <h2 className="tutorial-title">{title}</h2>
-      <div className="tutorial-paragraph" dangerouslySetInnerHTML={{ __html: instructionText }}/>
-      {defaultCodes.map((code, idx) => (
-        <div key={idx} style={{ marginTop: '12px', marginBottom: '12px' }}>
-          <MotorMusicEditor
-            height="28px"
-            width="600px"
-            initialCode={code}
-            lineNumbers="off"
-            disableDSTPMInput={true}
-          />
+  return (
+    <div style={{
+      position: 'fixed',
+      left: 0,
+      top: 0,
+      width: '180px', // Reduced from 250px
+      height: '100vh',
+      backgroundColor: 'rgba(26, 26, 46, 0.95)',
+      borderRight: '1px solid #4a5568',
+      padding: '15px 15px 30px 15px', // Added bottom padding to prevent cutoff
+      overflowY: 'auto',
+      zIndex: 10,
+      boxSizing: 'border-box', // Ensure padding is included in height calculation
+    }}>
+      <div style={{
+        marginBottom: '15px', // Reduced spacing
+        borderBottom: '1px solid #4a5568',
+        paddingBottom: '8px',
+        textAlign: 'center',
+        overflow: 'hidden', // Hide the cropped parts
+        height: '40px', // Reduced container height
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
+        <img 
+          src="/MM.png" 
+          alt="MotorMusic" 
+          style={{
+            height: '80px', // Reduced from 120px
+            width: 'auto',
+            objectFit: 'contain',
+            transform: 'scale(1.2)', // Reduced scaling from 1.5
+            objectPosition: 'center' // Focus on the center of the image
+          }}
+        />
+      </div>
+      
+      {sections.map((section, sectionIdx) => (
+        <div key={sectionIdx} style={{ marginBottom: '12px' }}> {/* Reduced spacing */}
+          <div 
+            onClick={() => onItemClick(section.startIndex)}
+            style={{
+              color: '#2b8db8',
+              fontSize: '0.85rem',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              marginBottom: '6px',
+              padding: '3px 0',
+              borderRadius: '3px',
+              backgroundColor: activeStepIndex >= section.startIndex && 
+                (sectionIdx === sections.length - 1 || activeStepIndex < sections[sectionIdx + 1].startIndex) 
+                ? 'rgba(43, 141, 184, 0.2)' : 'transparent',
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(43, 141, 184, 0.1)'}
+            onMouseLeave={(e) => {
+              const isActive = activeStepIndex >= section.startIndex && 
+                (sectionIdx === sections.length - 1 || activeStepIndex < sections[sectionIdx + 1].startIndex);
+              e.currentTarget.style.backgroundColor = isActive ? 'rgba(43, 141, 184, 0.2)' : 'transparent';
+            }}
+          >
+            {section.title}
+          </div>
+          
+          {tutorialSteps.slice(
+            section.startIndex, 
+            sectionIdx < sections.length - 1 ? sections[sectionIdx + 1].startIndex : tutorialSteps.length
+          ).map((step, stepIdx) => (
+            <div
+              key={stepIdx}
+              onClick={() => onItemClick(section.startIndex + stepIdx)}
+              style={{
+                color: '#a0aec0',
+                fontSize: '0.75rem',
+                cursor: 'pointer',
+                padding: '2px 0 2px 12px',
+                borderRadius: '3px',
+                lineHeight: '1.2',
+                backgroundColor: activeStepIndex === section.startIndex + stepIdx 
+                  ? 'rgba(160, 174, 192, 0.2)' : 'transparent',
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(160, 174, 192, 0.1)'}
+              onMouseLeave={(e) => {
+                const isActive = activeStepIndex === section.startIndex + stepIdx;
+                e.currentTarget.style.backgroundColor = isActive ? 'rgba(160, 174, 192, 0.2)' : 'transparent';
+              }}
+            >
+              {step.title}
+            </div>
+          ))}
         </div>
       ))}
     </div>
   );
 }
 
+function SectionHeader({title, isFirst = false}: {title: string, isFirst?: boolean}) {
+  return (
+    <div style={{
+      width: '100%',
+      textAlign: 'center',
+      margin: isFirst ? '0 0 25px 0' : '5px 0 25px 0',
+      padding: '15px 0',
+      borderTop: '1px solid #4a5568',
+      borderBottom: '1px solid #4a5568'
+    }}>
+      <h1 style={{
+        color: '#2b8db8',
+        fontSize: '1.5rem',
+        margin: 0,
+        fontWeight: 'bold',
+        letterSpacing: '0.05em'
+      }}>{title}</h1>
+    </div>
+  );
+}
+
+function TutorialBlock({title, instructionText, defaultCodes, heights = ["28px"]} : {title : string, instructionText : string, defaultCodes : string[], heights? : string[]}) {
+    return (
+    <div className="tutorial-block">
+      <h2 className="tutorial-title">{title}</h2>
+      <div className="tutorial-paragraph" dangerouslySetInnerHTML={{ __html: instructionText }}/>
+      {defaultCodes.map((code, idx) => {
+        const h = heights[idx] ?? heights[0] ?? "28px";
+        return (
+          <div key={idx} style={{ marginTop: '12px', marginBottom: '12px' }}>
+            <MotorMusicEditor
+              height={h}
+              width="600px"
+              initialCode={code}
+              lineNumbers="off"
+              disableDSTPMInput={true}
+            />
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 function App() {
+  const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [activeStepIndex, setActiveStepIndex] = useState(0);
+  
+  const scrollToStep = (stepIndex: number) => {
+    setActiveStepIndex(stepIndex); // Immediately update the active step
+    
+    const element = stepRefs.current[stepIndex];
+    const container = scrollContainerRef.current;
+    
+    if (element && container) {
+      // Calculate the position with a custom offset from the top
+      const elementTop = element.offsetTop;
+      const offset = 60; // 60px from the top of the container
+      
+      container.scrollTo({
+        top: elementTop - offset,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  useEffect(() => {
+    const handleScroll = () => {
+      console.log('Scroll event triggered!'); // Debug log
+      if (!scrollContainerRef.current) {
+        console.log('No scroll container ref'); // Debug log
+        return;
+      }
+      
+      const container = scrollContainerRef.current;
+      const containerRect = container.getBoundingClientRect();
+      console.log('Container rect:', containerRect.top); // Debug log
+      
+      // Find which step is currently in view
+      for (let i = stepRefs.current.length - 1; i >= 0; i--) {
+        const element = stepRefs.current[i];
+        if (element) {
+          const elementRect = element.getBoundingClientRect();
+          const relativeTop = elementRect.top - containerRect.top;
+          console.log(`Step ${i} relative position:`, relativeTop); // Debug log
+          
+          // Check if element is in the top portion of the viewport
+          if (relativeTop <= 150) { // Increased threshold for better detection
+            console.log('Setting active step to:', i); // Debug log
+            setActiveStepIndex(i);
+            break;
+          }
+        }
+      }
+    };
+
+    // Use a timeout to ensure DOM is ready
+    const setupScrollListener = () => {
+      console.log('Setting up scroll listener'); // Debug log
+      const container = scrollContainerRef.current;
+      console.log('Container element:', container); // Debug log
+      
+      if (container) {
+        container.addEventListener('scroll', handleScroll);
+        console.log('Scroll listener added'); // Debug log
+        handleScroll(); // Call once to set initial state
+        return () => {
+          console.log('Removing scroll listener'); // Debug log
+          container.removeEventListener('scroll', handleScroll);
+        };
+      } else {
+        console.log('No container found for scroll listener'); // Debug log
+        return undefined;
+      }
+    };
+
+    // Try immediately and also with a delay
+    const cleanup = setupScrollListener();
+    const timeoutId = setTimeout(() => {
+      console.log('Trying scroll listener setup again after timeout');
+      setupScrollListener();
+    }, 100);
+
+    return () => {
+      clearTimeout(timeoutId);
+      if (cleanup) cleanup();
+    };
+  }, []);
+
    const tutorialSteps = [
     {
       title: "Welcome to the MotorMusic Tutorial",
-      instructionText: "This is the tutorial for <strong>MotorMusic</strong>, a programming language designed to capture musical ideas from the inside out — not just as notes or sounds, but as felt motion, gesture, and inner musical experience. Rather than starting from scales or instruments, <strong>MotorMusic</strong> begins with how music moves us — in the body (space) and in time — and builds upward from there (the building up part is in progress and will come in later versions of the language). This guide will walk you through the fundamental components of the language step by step, showing how to shape musical thought using the core constructs of syllables, tension and release, and nested motion.",
+      instructionText: "This is the tutorial for <strong>MotorMusic</strong>, a programming language designed to capture musical ideas from the inside out — not just as notes or sounds, but as felt motion, gesture, and inner musical abstraction. Rather than starting from scales or instruments, <strong>MotorMusic</strong> begins with how music moves us — in the body (space) and in time — and builds upward from there. This guide will walk you through the fundamental components of the language step by step, showing how to shape musical thought through its core constructs.",
       defaultCodes: []
     },
     {
@@ -80,10 +300,75 @@ function App() {
   This helps us describe not just one level of tension and release, but <em>how one flows through another</em> — like nested waves in the body.`,
   defaultCodes: ["((a b . c) d e . f)", "((mo ^ tor . mu ^ sic) is . cool)"]
 }
+  ,
+
+  {
+    title: "Specifying Pitch",
+    instructionText: `MotorMusic will support multiple ways to map written syllables to sound in the future. In this release there are two modes you should be aware of:<br /><br />
+
+1) Default (symbolic) mode<br />
+- If you do not include any pitch statement, syllables are treated as symbolic labels only. They do not by themselves determine pitch or frequency — you may write any syllable (for example: <code>ca</code>, <code>twaaa</code>, <code>bla</code>) and it will not change the underlying pitch mapping.<br /><br />
+
+2) Pitch-specified mode (fixed mapping)<br />
+- To control pitch directly, place a single <code>PITCH_SPECIFICATION</code> statement at the top of your program. Example:<br />
+  <code>PITCH_SPECIFICATION: TwelveTET(440)</code><br />
+- When this statement is present, the language interprets syllables as written note names (A–G, optional <code>#</code>/<code>b</code>, optional octave). In other words, syllables must follow the note-name rules described below and will be mapped to frequencies according to the chosen pitch specification.<br /><br />
+
+What this means in practice:<br />
+<ul>
+  <li>Note names are the letters <code>A</code> through <code>G</code>. You may append <code>#</code> for sharp or <code>b</code> for flat (for example <code>C#</code> or <code>Bb</code>).</li>
+  <li>You may add an octave number 0–8 after the note name; if omitted the octave defaults to <strong>4</strong> (so <code>A</code> → <code>A4</code>).</li>
+  <li>The <code>PITCH_SPECIFICATION</code> sets the frequency that will be used for the reference note (A4 in TwelveTET). For example <code>TwelveTET(440)</code> makes A4 = 440 Hz.</li>
+  <li>When pitch mode is active, arbitrary syllables (like <code>ka</code> or <code>twaaa</code>) are not valid for producing pitch and will cause an error; use the default (symbolic) mode when you want free-form, non-pitched syllables.</li>
+</ul>
+`,
+    defaultCodes: [
+      "PITCH_SPECIFICATION: TwelveTET(440)\n(((2F ^ F) . 3G 3F 3Bb) . 3A )",
+      "PITCH_SPECIFICATION: TwelveTET(432)\n(((2F ^ F) . 3G 3F 3C5) . 3Bb )"
+    ],
+    heights: ["56px", "56px"]
+  },
+
+  {
+    title: "Polyphony (Part 1): Syllable Groups",
+    instructionText: `Syllable groups let you execute multiple syllables together as a single simultaneous unit.<br /><br />
+      Join syllables with <code>&</code> to indicate they are felt/played at the same time. All syllables in a group must share the same length; place a time tag on the front-most syllable to set the group's duration.<br /><br />
+    `,
+    defaultCodes: [
+      "PITCH_SPECIFICATION: TwelveTET(440)\nC&C5",
+      "PITCH_SPECIFICATION: TwelveTET(440)\nEb&Bb&F5",
+      "PITCH_SPECIFICATION: TwelveTET(432)\n(3Fb&G&C#5&G5 . 4F&G&C5&E5)",
+      "hi&blaaa&shtee"
+    ],
+    heights: ["56px", "56px", "56px", "28px"]
+  },
+
+  {
+    title: "Polyphony (Part 2): Containment",
+    instructionText: `Containment embeds an entire gesture inside a single syllable. Write the inner gesture with curly braces <code>{ ... }</code> immediately after the containing syllable. The contained gesture unfolds during the duration of the containing syllable. We do not write any number in front of the containing syllable as its time can be inferred by the contained gesture.<br /><br />
+    
+      Containment can be combined with syllable groups and other nesting to express advanced polyphonic relationships where multiple motions are experienced together but at different hierarchical levels.
+    `,
+    defaultCodes: [
+      "PITCH_SPECIFICATION: TwelveTET(440)\nD3&A3{D E F# . 2C#5 2A }",
+      "PITCH_SPECIFICATION: TwelveTET(440)\n(((2F ^ F) . Bb3&D3{3G ^ 3F 3Bb}) . 3A&F3 )",
+      "(ka{_ a . b} ga{1.5_ .5a .di} . 2du)"
+    ],
+    heights: ["56px", "56px", "28px"]
+  },
+
+  {
+    title: "Next Steps",
+    instructionText: "Thank you for making it through the MotorMusic tutorial! Now go to <a href='https://zacksussman.com/MotorMusic/' target='_blank' rel='noopener noreferrer' style='color: #2b8db8; text-decoration: underline;'>The Official Website</a> to try it out yourself and explore what's possible!",
+    defaultCodes: [],
+    heights: []
+  }
   ];
 
   return (
-  <div style={{
+  <div 
+    ref={scrollContainerRef}
+    style={{
     backgroundColor:'linear-gradient(to bottom, #1a1a2e, #16213e)',
     position: 'absolute',
     top: 0,
@@ -92,21 +377,37 @@ function App() {
     bottom: 0,
     overflowY: 'auto'
   }}>
+    <TableOfContents tutorialSteps={tutorialSteps} onItemClick={scrollToStep} activeStepIndex={activeStepIndex} />
     <div style={{
       padding: '60px 20px',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
       maxWidth: '800px',
-      margin: '0 auto'
+      margin: '0 auto',
+      marginLeft: '200px', // Reduced from 270px to 200px
+      position: 'relative',
+      zIndex: 2,
     }}>
       {tutorialSteps.map((step, idx) => (
-        <TutorialBlock
+        <div 
           key={idx}
-          title={step.title}
-          instructionText={step.instructionText}
-          defaultCodes={step.defaultCodes}
-        />
+          ref={(el) => { stepRefs.current[idx] = el; }}
+        >
+          {idx === 0 && <SectionHeader title="Intro" isFirst={true} />}
+          {idx === 1 && <SectionHeader title="Atomic Units" />}
+          {idx === 4 && <SectionHeader title="Basic Motion" />}
+          {idx === 7 && <SectionHeader title="Nested Motion" />}
+          {idx === 8 && <SectionHeader title="Pitch" />}
+          {idx === 9 && <SectionHeader title="Polyphony" />}
+          {idx === 11 && <SectionHeader title="Conclusion" />}
+          <TutorialBlock
+            title={step.title}
+            instructionText={step.instructionText}
+            defaultCodes={step.defaultCodes}
+            heights={step.heights || ["28px"]}
+          />
+        </div>
       ))}
     </div>
   </div>
